@@ -83,7 +83,7 @@ func drip(writer http.ResponseWriter, data []byte) {
 }
 
 func IndexHandler(writer http.ResponseWriter, req *http.Request) {
-	babbler := NewBabbler()
+	babbler := sharedBabbler()
 	var title string
 	if req.PathValue("slug") != "" {
 		title = req.PathValue("slug")

@@ -5,13 +5,17 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"sync"
 )
 
 const sourceText = "moby.txt"
 
+var sharedBabbler = sync.OnceValue(NewBabbler)
+
 type MarkovChain struct {
 	chain map[string][]string
 	words []string
+	keys  []string
 }
 
 func NewBabbler() *MarkovChain {
@@ -40,26 +44,20 @@ func NewBabbler() *MarkovChain {
 		words = append(words, slug)
 	}
 
-	return &MarkovChain{chain: chain, words: words}
+	keys := make([]string, 0, len(chain))
+	for k := range chain {
+		keys = append(keys, k)
+	}
+
+	return &MarkovChain{chain: chain, words: words, keys: keys}
 }
 
 func (m *MarkovChain) Generate(maxWords int) string {
-	if len(m.chain) == 0 {
+	if len(m.keys) == 0 {
 		return ""
 	}
 
-	keys := make([]string, 0, len(m.chain))
-	for k := range m.chain {
-		keys = append(keys, k)
-	}
-	word := keys[rand.Intn(len(keys))]
-	if _, ok := m.chain[word]; !ok {
-		keys := make([]string, 0, len(m.chain))
-		for k := range m.chain {
-			keys = append(keys, k)
-		}
-		word = keys[rand.Intn(len(keys))]
-	}
+	word := m.keys[rand.Intn(len(m.keys))]
 
 	var result []string
 	result = append(result, word)

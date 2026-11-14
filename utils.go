@@ -20,11 +20,10 @@ func envInt(key string, fallback int) int {
 }
 
 func envString(key string, fallback string) string {
-	var value string
 	if value := os.Getenv(key); value != "" {
-		return fallback
+		return value
 	}
-	return value
+	return fallback
 }
 
 var nonAlnum = regexp.MustCompile(`[^a-z0-9]+`)
