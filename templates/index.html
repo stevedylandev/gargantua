@@ -6,8 +6,12 @@
 		<title>{{.Title}}</title>
 	</head>
 	<body>
-    <h1>{{.Title}}</title>
+    <h1>{{.Title}}</h1>
     <p>{{.Content}}</p>
-		{{range .Items}}<div>{{ . }}</div>{{else}}<div><strong>no rows</strong></div>{{end}}
+    <ol>
+    {{range .Links}}
+      <a href='/{{ . }}'>{{ . }}</a>
+    {{end}}
+    </ol>
 	</body>
 </html>

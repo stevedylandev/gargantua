@@ -11,8 +11,8 @@ import (
 
 // Plan
 // - [x] Serve robots.txt with noindex
-// - [/] Serve root path html with babbler and links to new paths
-// - [ ] Serve dynamic path that takes in path param to serve babbler and more links
+// - [x] Serve root path html with babbler and links to new paths
+// - [x] Serve dynamic path that takes in path param to serve babbler and more links
 // - [ ] Slow down responses
 
 var portEnv = os.Getenv("PORT")
@@ -27,7 +27,7 @@ var robotsTxt string
 type PageData struct {
 	Title   string
 	Content string
-	Items   []string
+	Links   []string
 }
 
 func robotsHandler(writer http.ResponseWriter, req *http.Request) {
@@ -37,12 +37,18 @@ func robotsHandler(writer http.ResponseWriter, req *http.Request) {
 
 func indexHandler(writer http.ResponseWriter, req *http.Request) {
 	babbler := NewBabbler()
-	title := babbler.Generate(2)
+	var title string
+	if req.PathValue("slug") != "" {
+		title = req.PathValue("slug")
+	} else {
+		title = babbler.Generate(2)
+	}
 	content := babbler.Generate(500)
+	links := babbler.Links(5)
 	data := PageData{
 		Title:   title,
 		Content: content,
-		Items:   []string{"First link", "second link", "third link"},
+		Links:   links,
 	}
 	if err := tmpl.ExecuteTemplate(writer, "index.html", data); err != nil {
 		http.Error(writer, "Internal server error", http.StatusInternalServerError)
@@ -64,6 +70,7 @@ func main() {
 
 	http.HandleFunc("/robots.txt", robotsHandler)
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/{slug}", indexHandler)
 
 	port := fmt.Sprintf(":%s", portEnv)
 	log.Println("Listening on", port)

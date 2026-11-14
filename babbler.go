@@ -11,6 +11,7 @@ const sourceText = "moby.txt"
 
 type MarkovChain struct {
 	chain map[string][]string
+	words []string
 }
 
 func NewBabbler() *MarkovChain {
@@ -18,12 +19,28 @@ func NewBabbler() *MarkovChain {
 	if err != nil {
 		log.Fatal("Could not read source text for babbler", err)
 	}
-	words := strings.Fields(string(text))
+	fields := strings.Fields(string(text))
+
 	chain := make(map[string][]string)
-	for i := 0; i < len(words)-1; i++ {
-		chain[words[i]] = append(chain[words[i]], words[i+1])
+	for i := 0; i < len(fields)-1; i++ {
+		chain[fields[i]] = append(chain[fields[i]], fields[i+1])
 	}
-	return &MarkovChain{chain: chain}
+
+	seen := make(map[string]struct{})
+	words := make([]string, 0, len(chain))
+	for _, field := range fields {
+		slug := Slugify(field)
+		if slug == "" {
+			continue
+		}
+		if _, dup := seen[slug]; dup {
+			continue
+		}
+		seen[slug] = struct{}{}
+		words = append(words, slug)
+	}
+
+	return &MarkovChain{chain: chain, words: words}
 }
 
 func (m *MarkovChain) Generate(maxWords int) string {
@@ -57,4 +74,24 @@ func (m *MarkovChain) Generate(maxWords int) string {
 	}
 
 	return strings.Join(result, " ")
+}
+
+func (m *MarkovChain) Links(n int) []string {
+	if len(m.words) == 0 {
+		return nil
+	}
+	if n > len(m.words) {
+		n = len(m.words)
+	}
+	seen := make(map[string]struct{}, n)
+	links := make([]string, 0, n)
+	for len(links) < n {
+		word := m.words[rand.Intn(len(m.words))]
+		if _, dup := seen[word]; dup {
+			continue
+		}
+		seen[word] = struct{}{}
+		links = append(links, word)
+	}
+	return links
 }
