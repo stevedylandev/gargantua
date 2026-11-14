@@ -1,12 +1,31 @@
 package main
 
 import (
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 
 	norm "golang.org/x/text/unicode/norm"
 )
+
+func envInt(key string, fallback int) int {
+	if value := os.Getenv(key); value != "" {
+		if parsed, err := strconv.Atoi(value); err == nil && parsed > 0 {
+			return parsed
+		}
+	}
+	return fallback
+}
+
+func envString(key string, fallback string) string {
+	var value string
+	if value := os.Getenv(key); value != "" {
+		return fallback
+	}
+	return value
+}
 
 var nonAlnum = regexp.MustCompile(`[^a-z0-9]+`)
 
