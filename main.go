@@ -3,8 +3,8 @@ package main
 import (
 	"embed"
 	"fmt"
-	"log"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 )
@@ -25,19 +25,24 @@ var tmpl = template.Must(template.ParseFS(templatesFS, "templates/*.html"))
 var robotsTxt string
 
 type PageData struct {
-	Title string
-	Items []string
+	Title   string
+	Content string
+	Items   []string
 }
 
-func robotsHandler(writer http.ResponseWriter, req *http.Request){
+func robotsHandler(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	fmt.Fprint(writer, robotsTxt)
 }
 
 func indexHandler(writer http.ResponseWriter, req *http.Request) {
+	babbler := NewBabbler()
+	title := babbler.Generate(2)
+	content := babbler.Generate(500)
 	data := PageData{
-		Title: "Babbler",
-		Items: []string{"First link", "second link", "third link"},
+		Title:   title,
+		Content: content,
+		Items:   []string{"First link", "second link", "third link"},
 	}
 	if err := tmpl.ExecuteTemplate(writer, "index.html", data); err != nil {
 		http.Error(writer, "Internal server error", http.StatusInternalServerError)
@@ -46,7 +51,7 @@ func indexHandler(writer http.ResponseWriter, req *http.Request) {
 
 func requestMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
-		log.Printf("%s %s %s\n", req.Method, req.URL, req.RemoteAddr)
+		log.Printf("%s %s %s\n", req.Method, req.URL, req.UserAgent())
 		writer.Header().Set("X-Robots-Tag", "noindex, nofollow")
 		handler.ServeHTTP(writer, req)
 	})
