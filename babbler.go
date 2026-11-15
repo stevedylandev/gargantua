@@ -8,15 +8,13 @@ import (
 	"sync"
 )
 
-const sourceText = "moby.txt"
-
-var sharedBabbler = sync.OnceValue(NewBabbler)
-
 type MarkovChain struct {
 	chain map[string][]string
 	words []string
 	keys  []string
 }
+
+var sharedBabbler = sync.OnceValue(NewBabbler)
 
 func NewBabbler() *MarkovChain {
 	text, err := os.ReadFile(sourceText)

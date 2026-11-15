@@ -11,14 +11,6 @@ import (
 	"time"
 )
 
-var portEnv = envString("PORT", "8090")
-
-var (
-	dripDelayMinMs = envInt("DRIP_DELAY_MIN_MS", 50)
-	dripDelayMaxMs = envInt("DRIP_DELAY_MAX_MS", 150)
-	dripChunkMax   = envInt("DRIP_CHUNK_MAX_BYTES", 60)
-)
-
 //go:embed templates/*.html
 var templatesFS embed.FS
 var tmpl = template.Must(template.ParseFS(templatesFS, "templates/*.html"))
