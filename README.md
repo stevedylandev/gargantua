@@ -1,6 +1,6 @@
 # Gargantua 
 
-![cover](https://files.stevedylan.dev/gargantua-demo.jpeg)
+![cover](https://files.stevedylan.dev/gargantua-demo.jpg)
 
 > This little maneuver's going to cost us 51 years
 
