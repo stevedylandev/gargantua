@@ -1,0 +1,30 @@
+[Unit]
+Description=Gargantua
+Documentation=https://github.com/stevedylandev/gargantua
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/gargantua
+
+# Listen on all interfaces; change if running behind a reverse proxy.
+# Override any GARGANTUA_* variable from the Configuration section here.
+Environment=GARGANTUA_HOST=0.0.0.0
+Environment=GARGANTUA_CORPUS=/usr/local/share/gargantua/moby.txt
+
+# A tarpit holds many simultaneous connections; the default fd limit
+# (often 1024) is the real ceiling on trapped crawlers, so raise it.
+LimitNOFILE=1000000
+
+DynamicUser=yes
+ProtectSystem=strict
+ProtectHome=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+Restart=on-failure
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target

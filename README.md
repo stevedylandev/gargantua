@@ -23,6 +23,46 @@ Run the server
 gargantua
 ```
 
+Alternatively use Docker
+
+```bash
+docker compose up -d --build
+```
+
+## Running as a daemon 
+
+Ready-made service files for systemd and OpenRC live in `deploy/`. Both raise the file-descriptor limit to 1,000,000, since that limit is the ceiling on how many crawlers the tarpit can hold at once. You can read more about this in the [reasoning](#Reasoning).
+
+First, build and install the binary and corpus:
+
+```bash
+go build -o gargantua .
+sudo mkdir -p /usr/local/share/gargantua
+sudo cp gargantua /usr/local/bin/gargantua
+sudo cp moby.txt /usr/local/share/gargantua/moby.txt
+```
+
+### systemd 
+
+```bash
+sudo cp deploy/systemd/gargantua.service /etc/systemd/system/
+sudo systemctl enable --now gargantua
+```
+
+The unit uses `DynamicUser`, so no user account needs to be created. Tune behaviour by editing the `Environment=` lines in the unit.
+
+### OpenRC
+
+```bash
+doas adduser -S -D -H gargantua
+doas cp deploy/openrc/gargantua.initd /etc/init.d/gargantua
+doas cp deploy/openrc/gargantua.confd /etc/conf.d/gargantua
+doas rc-update add gargantua default
+doas rc-service gargantua start
+```
+
+Configuration and the fd limit live in `/etc/conf.d/gargantua`, which OpenRC sources automatically on each start. Edit it and run `doas rc-service gargantua restart` to apply changes.
+
 ## Configuration 
 
 Use the following environment variables to configure Gargantua

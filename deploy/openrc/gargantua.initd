@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+
+name="gargantua"
+description="Gargantua"
+supervisor=supervise-daemon
+
+command=/usr/local/bin/gargantua
+command_user="gargantua:gargantua"
+
+depend() {
+	need net
+}

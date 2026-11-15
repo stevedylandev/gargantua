@@ -1,0 +1,20 @@
+services:
+  gargantua:
+    build: .
+    image: gargantua
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    environment:
+      GARGANTUA_HOST: "0.0.0.0"
+      GARGANTUA_PORT: "8090"
+      GARGANTUA_DELAY_MIN_MS: "150"
+      GARGANTUA_DELAY_MAX_MS: "250"
+      GARGANTUA_CHUNK_MAX_BYTES: "45"
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1000000
+    # If netfilter conntrack is loaded on the host, this can cap held
+    # connections below the fd limit; raise it on the host via sysctl if needed:
+    #   sysctl -w net.netfilter.nf_conntrack_max=1000000

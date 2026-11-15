@@ -1,0 +1,8 @@
+# /etc/conf.d/gargantua
+
+# Raise the file-descriptor limit so the tarpit can hold many simultaneous
+# connections. The kernel ceiling is /proc/sys/fs/nr_open (default 1048576).
+rc_ulimit="-n 1000000"
+
+supervise_daemon_args="--env GARGANTUA_HOST=0.0.0.0 \
+	--env GARGANTUA_CORPUS=/usr/local/share/gargantua/moby.txt"
