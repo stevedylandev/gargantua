@@ -4,14 +4,29 @@
 		<meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
 		<title>{{.Title}}</title>
+    <style>
+      * {
+        background: #121113;
+        color: white;
+        font-family: monospace;
+      }
+
+      body {
+        max-width: 600px;
+        margin: auto;
+      }
+
+    </style>
 	</head>
 	<body>
     <h1>{{.Title}}</h1>
     <p>{{.Content}}</p>
-    <ol>
+    <ul>
     {{range .Links}}
-      <a href='/{{ . }}'>{{ . }}</a>
+      <li>
+        <a href='/{{ . }}'>{{ . }}</a>
+      </li>
     {{end}}
-    </ol>
+    </ul>
 	</body>
 </html>
