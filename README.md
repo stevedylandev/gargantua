@@ -1,6 +1,6 @@
 # Gargantua 
 
-![cover](https://files.stevedylan.dev/gargantua.jpeg)
+![cover](https://files.stevedylan.dev/gargantua-demo.jpeg)
 
 > This little maneuver's going to cost us 51 years
 
@@ -48,7 +48,7 @@ Disallow: /gargantua
 
 Then have that `/gargantua` path do a permanent redirect to a server running the program. Crawlers are supposed to obey the `robots.txt`, and by knowingly disregarding that rule, they are subject to Gargantua. 
 
-I also wanted to write this in Go instead of Lua to make it more resource efficient. Go's advantage here (apart from speed) is that blocking is cheap. Each tarpitted connection lives in its own goroutine, parked in a sleep or socket wait for the vast majority of its life at a few KB of memory each, with the runtime's netpoller handling I/O without dedicating threads. The Markov chain corpus is built once with `sync.OnceValue` and shared across every connection, and templates are embedded and parsed at compile time, so a request never touches disk. The result is a single static binary that makes the OS file-descriptor limit the ceiling on how many crawlers you can trap at once, not memory or CPU. 
+I also wanted to write this in Go instead of Lua. Go's advantage here (apart from speed) is that blocking is cheap. Each tarpitted connection lives in its own goroutine, parked in a sleep or socket wait for the vast majority of its life at a few KB of memory each, with the runtime's netpoller handling I/O without dedicating threads. The Markov chain corpus is built once with `sync.OnceValue` and shared across every connection, and templates are embedded and parsed at compile time, so a request never touches disk. The result is a single static binary that makes the OS file-descriptor limit the ceiling on how many crawlers you can trap at once, not memory or CPU. 
 
 We may not have a chance to stand again the onslaught of big AI, but it's fun to try. 
 
