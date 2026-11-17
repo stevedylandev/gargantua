@@ -7,7 +7,7 @@
 A simple scraper tar pit and maze written in ~400 lines of Go.
 
 <details>
-<summary>Demo<summary/>
+<summary>Demo</summary>
 
 ![gif](https://files.stevedylan.dev/gargantua-demo.gif)
 
