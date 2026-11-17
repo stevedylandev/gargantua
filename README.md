@@ -33,6 +33,9 @@ docker compose up -d --build
 
 Ready-made service files for systemd and OpenRC live in `deploy/`. Both raise the file-descriptor limit to 1,000,000, since that limit is the ceiling on how many crawlers the tarpit can hold at once. You can read more about this in the [reasoning](#Reasoning).
 
+> [!NOTE]
+> Gargantua only affects crawlers hitting your own server, but it intentionally holds large numbers of connections open for long periods. Check your hosting provider's acceptable-use policy before deploying, especially on shared infrastructure.
+
 First, build and install the binary and corpus:
 
 ```bash
