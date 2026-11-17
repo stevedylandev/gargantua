@@ -70,17 +70,20 @@ Configuration and the fd limit live in `/etc/conf.d/gargantua`, which OpenRC sou
 
 Use the following environment variables to configure Gargantua
 
-- `GARGANTUA_CORPUS` - Text used for Markov babbler (default looks for `moby.txt` in the repo)
-- `GARGANTUA_HOST`- Host used (default `127.0.0.1`)
-- `GARGANTUA_PORT` - Port used (default `8090`)
-- `GARGANTUA_LOG_LEVEL` - Minimum log level: `debug`, `info`, `warn` or `error` (default `info`)
-- `GARGANTUA_LOG_FORMAT` - Log format: `text` or `json` (default `text`)
-- Gargantua uses a slow drip method for writing the html that will keep the scraper longer. You can tweak the range of delay used between writes and the amount of data written.
-  - `GARGANTUA_DELAY_MIN_MS` - Minimum delay in ms (default `150`)
-  - `GARGANTUA_DELAY_MAX_MS` - Maximum delay in ms (default `250`)
-  - `GARGANTUA_CHUNK_MAX_BYTES` - Maximum number of bytes in a written chunk (default `45)
-- `robots.txt` - Defaults to `User-agent: * Disallow: /` to prevent indexing; the goal i to direct a disobedient crawler to this deployed server and get it stuck.
+| Variable | Description | Default |
+| --- | --- | --- |
+| `GARGANTUA_CORPUS` | Text file used for the Markov babbler | `moby.txt` |
+| `GARGANTUA_HOST` | Host to listen on | `127.0.0.1` |
+| `GARGANTUA_PORT` | Port to listen on | `8090` |
+| `GARGANTUA_LOG_LEVEL` | Minimum log level: `debug`, `info`, `warn` or `error` | `info` |
+| `GARGANTUA_LOG_FORMAT` | Log format: `text` or `json` | `text` |
+| `GARGANTUA_DELAY_MIN_MS` | Minimum delay between drip writes, in ms | `150` |
+| `GARGANTUA_DELAY_MAX_MS` | Maximum delay between drip writes, in ms | `250` |
+| `GARGANTUA_CHUNK_MAX_BYTES` | Maximum number of bytes in a written chunk | `45` |
 
+Gargantua uses a slow drip method for writing the html that will keep the scraper longer. You can tweak the range of delay used between writes and the amount of data written with the `DELAY` and `CHUNK` variables above.
+
+`robots.txt` defaults to `User-agent: * Disallow: /` to prevent indexing; the goal is to direct a disobedient crawler to this deployed server and get it stuck.
 
 ## Reasoning
 
