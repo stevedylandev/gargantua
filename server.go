@@ -77,9 +77,12 @@ func drip(writer http.ResponseWriter, data []byte) {
 func IndexHandler(writer http.ResponseWriter, req *http.Request) {
 	babbler := sharedBabbler()
 	var title string
-	if req.PathValue("slug") != "" {
+	switch {
+	case req.PathValue("slug2") != "":
+		title = req.PathValue("slug") + " " + req.PathValue("slug2")
+	case req.PathValue("slug") != "":
 		title = req.PathValue("slug")
-	} else {
+	default:
 		title = babbler.Generate(2)
 	}
 	content := babbler.Generate(500)

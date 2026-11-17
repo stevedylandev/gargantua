@@ -82,12 +82,12 @@ func (m *MarkovChain) Links(n int) []string {
 	seen := make(map[string]struct{}, n)
 	links := make([]string, 0, n)
 	for len(links) < n {
-		word := m.words[rand.Intn(len(m.words))]
-		if _, dup := seen[word]; dup {
+		pair := m.words[rand.Intn(len(m.words))] + "/" + m.words[rand.Intn(len(m.words))]
+		if _, dup := seen[pair]; dup {
 			continue
 		}
-		seen[word] = struct{}{}
-		links = append(links, word)
+		seen[pair] = struct{}{}
+		links = append(links, pair)
 	}
 	return links
 }

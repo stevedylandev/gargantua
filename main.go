@@ -18,6 +18,7 @@ var (
 func main() {
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/{slug}", IndexHandler)
+	http.HandleFunc("/{slug}/{slug2}", IndexHandler)
 	http.HandleFunc("/robots.txt", RobotsHandler)
 
 	port := fmt.Sprintf("%s:%s", hostEnv, portEnv)
