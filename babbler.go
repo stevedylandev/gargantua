@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math/rand"
 	"os"
 	"strings"
@@ -19,7 +18,7 @@ var sharedBabbler = sync.OnceValue(NewBabbler)
 func NewBabbler() *MarkovChain {
 	text, err := os.ReadFile(sourceText)
 	if err != nil {
-		log.Fatal("Could not read source text for babbler", err)
+		fatal("could not read source text for babbler", "path", sourceText, "err", err)
 	}
 	fields := strings.Fields(string(text))
 
@@ -46,6 +45,13 @@ func NewBabbler() *MarkovChain {
 	for k := range chain {
 		keys = append(keys, k)
 	}
+
+	logger.Debug("babbler corpus loaded",
+		"path", sourceText,
+		"words", len(fields),
+		"unique_words", len(words),
+		"chain_entries", len(chain),
+	)
 
 	return &MarkovChain{chain: chain, words: words, keys: keys}
 }
@@ -85,7 +91,7 @@ func (m *MarkovChain) Links(n int) []string {
 	for len(links) < n {
 		link := m.randomLink()
 		if _, dup := seen[link]; dup {
-			continue 
+			continue
 		}
 		seen[link] = struct{}{}
 		links = append(links, link)

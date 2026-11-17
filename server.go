@@ -1,11 +1,10 @@
-package main 
+package main
 
 import (
 	"bytes"
 	"embed"
 	"fmt"
 	"html/template"
-	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -65,7 +64,7 @@ func drip(writer http.ResponseWriter, data []byte) {
 			chunk = len(data)
 		}
 		if _, err := writer.Write(data[:chunk]); err != nil {
-			return 
+			return
 		}
 		if canFlush {
 			flusher.Flush()
@@ -100,11 +99,44 @@ func IndexHandler(writer http.ResponseWriter, req *http.Request) {
 	TarpitWrite(writer, buf.Bytes())
 }
 
-func RequestMiddleware(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
-		log.Printf("%s %s %s\n", req.Method, req.URL, req.UserAgent())
-		writer.Header().Set("X-Robots-Tag", "noindex, nofollow")
-		handler.ServeHTTP(writer, req)
-	})
+type statusRecorder struct {
+	http.ResponseWriter
+	status int
 }
 
+func (r *statusRecorder) WriteHeader(code int) {
+	r.status = code
+	r.ResponseWriter.WriteHeader(code)
+}
+
+func (r *statusRecorder) Flush() {
+	if flusher, ok := r.ResponseWriter.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
+
+func RequestMiddleware(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
+		start := time.Now()
+		recorder := &statusRecorder{ResponseWriter: writer, status: http.StatusOK}
+
+		logger.Debug("request started",
+			"method", req.Method,
+			"path", req.URL.Path,
+			"remote", req.RemoteAddr,
+			"user_agent", req.UserAgent(),
+		)
+
+		writer.Header().Set("X-Robots-Tag", "noindex, nofollow")
+		handler.ServeHTTP(recorder, req)
+
+		logger.Info("request",
+			"method", req.Method,
+			"path", req.URL.Path,
+			"status", recorder.status,
+			"duration", time.Since(start).Round(time.Millisecond),
+			"remote", req.RemoteAddr,
+			"user_agent", req.UserAgent(),
+		)
+	})
+}

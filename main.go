@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -16,12 +15,15 @@ var (
 )
 
 func main() {
+	logger.Info("starting", "addr", fmt.Sprintf("%s:%s", hostEnv, portEnv))
+
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/{slug}", IndexHandler)
 	http.HandleFunc("/{slug}/{slug2}", IndexHandler)
 	http.HandleFunc("/robots.txt", RobotsHandler)
 
 	port := fmt.Sprintf("%s:%s", hostEnv, portEnv)
-	log.Println("Listening on", port)
-	log.Fatal(http.ListenAndServe(port, RequestMiddleware(http.DefaultServeMux)))
+	if err := http.ListenAndServe(port, RequestMiddleware(http.DefaultServeMux)); err != nil {
+		fatal("server failed", "err", err)
+	}
 }

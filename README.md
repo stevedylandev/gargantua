@@ -73,6 +73,8 @@ Use the following environment variables to configure Gargantua
 - `GARGANTUA_CORPUS` - Text used for Markov babbler (default looks for `moby.txt` in the repo)
 - `GARGANTUA_HOST`- Host used (default `127.0.0.1`)
 - `GARGANTUA_PORT` - Port used (default `8090`)
+- `GARGANTUA_LOG_LEVEL` - Minimum log level: `debug`, `info`, `warn` or `error` (default `info`)
+- `GARGANTUA_LOG_FORMAT` - Log format: `text` or `json` (default `text`)
 - Gargantua uses a slow drip method for writing the html that will keep the scraper longer. You can tweak the range of delay used between writes and the amount of data written.
   - `GARGANTUA_DELAY_MIN_MS` - Minimum delay in ms (default `150`)
   - `GARGANTUA_DELAY_MAX_MS` - Maximum delay in ms (default `250`)
