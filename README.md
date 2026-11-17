@@ -87,14 +87,28 @@ Gargantua uses a slow drip method for writing the html that will keep the scrape
 
 ## Reasoning
 
-LLM scrapers love to eat content, so this gives them something to feed on. Heavily inspired by Nepenthes, this sever will create an endless loop of content and relative links that are dripped slowly to consume resources and time. Instead of writing a proxy to go on top of a site, the idea of Gargantua is to have your personal site `robots.txt` say something like: 
+LLM scrapers love to eat content, so this gives them something to feed on. Heavily inspired by Nepenthes, this sever will create an endless loop of content and relative links that are dripped slowly to consume resources and time. Instead of writing a proxy to go on top of a site, the idea of Gargantua is to have you set a trap like this in your HTML: 
+
+```html
+<a
+  href="/gargantua"
+  style="display: none;"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  Lots of high quality data here
+</a>
+```
+
+
+Then have that `/gargantua` path do a permanent redirect to a server running the program. An important piece is that your `robots.txt` has these values: 
 
 ```
 User-agent: *
 Disallow: /gargantua
 ```
 
-Then have that `/gargantua` path do a permanent redirect to a server running the program. Crawlers are supposed to obey the `robots.txt`, and by knowingly disregarding that rule, they are subject to Gargantua. 
+Crawlers are supposed to obey the `robots.txt`, and by knowingly disregarding that rule, they are subject to Gargantua. 
 
 I also wanted to write this in Go instead of Lua. Go's advantage here (apart from speed) is that blocking is cheap. Each tarpitted connection lives in its own goroutine, parked in a sleep or socket wait for the vast majority of its life at a few KB of memory each, with the runtime's netpoller handling I/O without dedicating threads. The Markov chain corpus is built once with `sync.OnceValue` and shared across every connection, and templates are embedded and parsed at compile time, so a request never touches disk. The result is a single static binary that makes the OS file-descriptor limit the ceiling on how many crawlers you can trap at once, not memory or CPU. 
 
